@@ -79,9 +79,14 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public async Task Execute(IJobExecutionContext context)
         {
+            Logger.Info("DelayedWorkRunnerJobScheduler started 1");
             IScheduler sched = await new StdSchedulerFactory().GetScheduler();
             
+            Logger.Info("DelayedWorkRunnerJobScheduler started 2");
             var queueNameList = DelayedWorkDatabase.Instance.GetDatabase().ListCollectionNames().ToList();
+            
+            Logger.Info("DelayedWorkRunnerJobScheduler started 3");
+
             foreach (var item in queueNameList)
             {
                 if(!sched.CheckExists(new JobKey(item)).Result)
@@ -114,10 +119,10 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
     public class DelayedWorkRunnerScheduler {
         public async void Schedule () {
             StdSchedulerFactory factory = new StdSchedulerFactory ();
-
+            
             // get a scheduler
             IScheduler sched = await factory.GetScheduler ();
-            
+            await sched.Start ();
 
             // define the job and tie it to our HelloJob class
             IJobDetail job = JobBuilder.Create<DelayedWorkRunnerJobScheduler> ()
@@ -133,7 +138,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
                 .Build ();
 
             sched.ScheduleJob (job, trigger).Wait();
-            await sched.Start ();
+           
         }
     }
 }
