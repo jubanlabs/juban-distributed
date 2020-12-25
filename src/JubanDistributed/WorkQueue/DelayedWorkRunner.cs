@@ -85,7 +85,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
             Logger.Info("DelayedWorkRunnerJobScheduler started 2");
             var queueNameList = DelayedWorkDatabase.Instance.GetDatabase().ListCollectionNames().ToList();
             
-            Logger.Info("DelayedWorkRunnerJobScheduler started 3");
+            Logger.Info("DelayedWorkRunnerJobScheduler started 3 queueNameList count:" + queueNameList.Count);
 
             foreach (var item in queueNameList)
             {
