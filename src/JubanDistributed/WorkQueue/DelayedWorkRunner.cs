@@ -79,13 +79,11 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public async Task Execute(IJobExecutionContext context)
         {
-            Logger.Info("DelayedWorkRunnerJobScheduler started 1");
             IScheduler sched = await new StdSchedulerFactory().GetScheduler();
             
-            Logger.Info("DelayedWorkRunnerJobScheduler started 2");
             var queueNameList = DelayedWorkDatabase.Instance.GetDatabase().ListCollectionNames().ToList();
             
-            Logger.Info("DelayedWorkRunnerJobScheduler started 3 queueNameList count:" + queueNameList.Count);
+            Logger.ConditionalTrace("queueNameList count:" + queueNameList.Count);
 
             foreach (var item in queueNameList)
             {
