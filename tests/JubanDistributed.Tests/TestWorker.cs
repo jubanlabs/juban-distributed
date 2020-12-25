@@ -135,7 +135,7 @@ namespace Jubanlabs.JubanDistributed.Tests {
             service.plus (1);
             int cnt = 0;
             while (cnt < 30) {
-                Logger.ConditionalTrace (TestWorker.num);
+                Logger.ConditionalTrace ("TestWorker.num "+TestWorker.num);
                 if (TestWorker.num == 2) {
                     Assert.True (true);
                     return;
@@ -144,7 +144,7 @@ namespace Jubanlabs.JubanDistributed.Tests {
                     cnt++;
                 }
             }
-            Logger.ConditionalTrace(TestWorker.num);
+            Logger.ConditionalTrace("Timeout: TestWorker.num "+TestWorker.num);
             Assert.True (false);
         }
 
