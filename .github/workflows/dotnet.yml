@@ -60,6 +60,8 @@ jobs:
 
     - name: test
       run: |
+        lsb_release -a
+        uname -a
         dotnet list . package
         dotnet tool install -g dotnet-reportgenerator-globaltool || true
         dotnet test -v n --collect:"XPlat Code Coverage" --no-build 
