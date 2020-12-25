@@ -1,0 +1,8 @@
+{
+    "hello":"world",
+    "hello-to-be-override":"world",
+    "jubandistributed.messagingServer": "zoo.jer.pw",
+    "jubandistributed.delayedWorkerStorage.mongodb":"mongodb://mongodb:mongodb@zoo.jer.pw:27017/?authMechanism=SCRAM-SHA-256",
+    "jubanspider.mongodb":"mongodb://mongodb:mongodb@zoo.jer.pw:27017/?authMechanism=SCRAM-SHA-256",
+    "test-mongo":"mongodb://mongodb:mongodb@zoo.jer.pw:27017/?authMechanism=SCRAM-SHA-256"
+}

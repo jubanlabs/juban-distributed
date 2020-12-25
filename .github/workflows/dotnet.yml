@@ -1,0 +1,102 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+    tags: 
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+
+env:
+  PROJECT_PATH: src/JubanDistributed/
+  PROJECT_FILE: JubanDistributed.csproj
+  SOLUTION_FILE: JubanDistributed.sln
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: jubanlabs/ci-base
+    
+    services:
+      mongodb:
+        image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: mongodb
+          MONGO_INITDB_ROOT_PASSWORD: mongodb
+      rabbitmq:
+        image: rabbitmq
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: prepare variables for release
+      if: ${{ startsWith(github.ref,'refs/tags/v') }}
+      run: |
+        echo "ALPHA=" >> $GITHUB_ENV
+        echo "PackConfiguration=Release" >> $GITHUB_ENV
+
+    - name: prepare variables for pre-release
+      if: ${{ !startsWith(github.ref,'refs/tags/v') }}
+      run: |
+        echo "ALPHA=-alpha.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+        echo "PackConfiguration=Debug" >> $GITHUB_ENV
+
+    - name: update version & add github nuget souce
+      run: |
+        pwd
+        echo $ALPHA
+        sed -i "s/<\/Version/$ALPHA<\/Version/" $PROJECT_PATH$PROJECT_FILE
+        dotnet nuget add source https://nuget.pkg.github.com/jubanlabs/index.json -n github -u zefeiji -p ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
+
+    - name: restore dependencies
+      run: dotnet restore
+
+    - name: build
+      run: dotnet build --no-restore
+
+    - name: test
+      run: |
+        dotnet list . package
+        dotnet tool install -g dotnet-reportgenerator-globaltool || true
+        dotnet test -v n --collect:"XPlat Code Coverage" --no-build 
+        find . -name "coverage.cobertura.xml" -exec ~/.dotnet/tools/reportgenerator -reports:'{}' -targetdir:coverage -reporttypes:TextSummary \; -exec cat coverage/Summary.txt \;
+        find . -name "coverage.cobertura.xml" -exec ~/.dotnet/tools/reportgenerator -reports:'{}' -targetdir:coverage-html -reporttypes:HtmlInline_AzurePipelines \; 
+
+    - name: pack
+      run: |
+        echo $PackConfiguration
+        dotnet pack -c $PackConfiguration $PROJECT_PATH$PROJECT_FILE
+        
+    - name: publish to nuget
+      if: ${{ startsWith(github.ref,'refs/tags/v') }}
+      env: 
+        NUGET_KEY: ${{ secrets.NUGET_KEY }}    
+      run: dotnet nuget push ${PROJECT_PATH}bin/$PackConfiguration/*.nupkg -k $NUGET_KEY -s https://api.nuget.org/v3/index.json
+
+    - name: publish to github
+      run: dotnet nuget push ${PROJECT_PATH}bin/$PackConfiguration/*.nupkg -k ${{ secrets.GITHUB_TOKEN }} --source "github"
+        
+    - name: checkout code-coverage site
+      uses: actions/checkout@v2
+      with:
+        repository: jubanlabs/code-coverage
+        ref: main
+        path: pages
+        token: ${{ secrets.PAT_PUB_REPO }}
+
+    - name: upload codecoverage
+      run: |
+        mkdir -p pages/$GITHUB_REPOSITORY/$GITHUB_RUN_NUMBER
+        cp -r coverage-html/* pages/$GITHUB_REPOSITORY/$GITHUB_RUN_NUMBER
+        cd pages
+        C_RAGE=`grep 'Line coverage' ../coverage/Summary.txt| sed -r 's/Line coverage: (.*)/\1/'`
+        echo "{\"schemaVersion\": 1,\"label\": \"coverage\",\"message\": \"$C_RAGE\",\"color\": \"orange\"}" > $GITHUB_REPOSITORY/badge.txt
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "codecoverage for $GITHUB_REPOSITORY #$GITHUB_RUN_NUMBER"
+        git push

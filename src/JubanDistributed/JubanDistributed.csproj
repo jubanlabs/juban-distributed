@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Jubanlabs.JubanDistributed</PackageId>
+    <AssemblyVersion>0.2.2</AssemblyVersion>
+    <Version>0.2.2</Version>
+    <Authors>Zefei Ji</Authors>
+    <RepositoryUrl>https://github.com/jubanlabs/juban-shared</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Jubanlabs.JubanShared" Version="0.2.*-*" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
+    <PackageReference Include="protobuf-net" Version="3.0.29" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.1.0" />
+    <PackageReference Include="Quartz" Version="3.0.7" />
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    
+    <PackageReference Include="Castle.Core" Version="4.4.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.205">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <Content Include="appsettings.json" CopyToOutputDirectory="Always" />
+    
+    <Content Include="appsettings.testing.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+</Project>
