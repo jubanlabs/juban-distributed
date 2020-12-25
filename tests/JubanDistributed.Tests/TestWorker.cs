@@ -134,7 +134,7 @@ namespace Jubanlabs.JubanDistributed.Tests {
             Task.Delay (5000);
             service.plus (1);
             int cnt = 0;
-            while (cnt < 30) {
+            while (cnt < 20) {
                 Logger.ConditionalTrace ("TestWorker.num "+TestWorker.num);
                 if (TestWorker.num == 2) {
                     Assert.True (true);
