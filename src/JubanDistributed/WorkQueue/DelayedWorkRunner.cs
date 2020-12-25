@@ -117,23 +117,23 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
 
             // get a scheduler
             IScheduler sched = await factory.GetScheduler ();
-            await sched.Start ();
-
-                // define the job and tie it to our HelloJob class
-                IJobDetail job = JobBuilder.Create<DelayedWorkRunnerJobScheduler> ()
-                    .WithIdentity ("delayedworkscheduler")
-                    .Build ();
-
-                // Trigger the job to run now, and then every 40 seconds
-                ITrigger trigger = TriggerBuilder.Create ()
-                    .WithIdentity ("delayedworkscheduler")
-                    .StartNow ()
-                    .WithSimpleSchedule (x => x.WithInterval (new TimeSpan(0, 0, 30))
-                        .RepeatForever ())
-                    .Build ();
-
-                await sched.ScheduleJob (job, trigger);
             
+
+            // define the job and tie it to our HelloJob class
+            IJobDetail job = JobBuilder.Create<DelayedWorkRunnerJobScheduler> ()
+                .WithIdentity ("delayedworkscheduler")
+                .Build ();
+
+            // Trigger the job to run now, and then every 40 seconds
+            ITrigger trigger = TriggerBuilder.Create ()
+                .WithIdentity ("delayedworkscheduler")
+                .StartNow ()
+                .WithSimpleSchedule (x => x.WithInterval (new TimeSpan(0, 0, 30))
+                    .RepeatForever ())
+                .Build ();
+
+            sched.ScheduleJob (job, trigger).Wait();
+            await sched.Start ();
         }
     }
 }
