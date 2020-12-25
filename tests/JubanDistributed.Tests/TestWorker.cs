@@ -122,20 +122,19 @@ namespace Jubanlabs.JubanDistributed.Tests {
         [Fact]
         public void testSendWorkDelayed () {
             var worker = new WorkQueueTest ();
-
             worker.StartWorker ();
-            new DelayedWorkRunnerScheduler ().Schedule ();
-            Logger.ConditionalTrace (AppSettings.Instance.GetValue ("jubandistributed.messagingServer"));
+
             TestWorker.num = 0;
             var service = (IWorkQueueTest) DService.getWorkerService (typeof (IWorkQueueTest),
                 new DistributedCallOptions () { IsPersistentAssignment = true });
             service.plus (1);
             Logger.ConditionalTrace("plus 1");
-            //new DelayedWorkRunner().Run("JubanDistributed.Tests.TestWorker+IWorkQueueTest.sendTest");
-            Task.Delay (5000);
             service.plus (1);
             Logger.ConditionalTrace("plus 1");
+
             Thread.Sleep (1000);
+            new DelayedWorkRunnerScheduler ().Schedule ();
+            
             int cnt = 0;
             while (cnt < 20) {
                 Logger.ConditionalTrace ("TestWorker.num "+TestWorker.num);
