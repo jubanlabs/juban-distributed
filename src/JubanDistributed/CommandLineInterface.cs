@@ -45,8 +45,7 @@ namespace Jubanlabs.JubanDistributed {
             /// kickoff
             /// -f fork
 
-           IConfigurationRoot configlist =AppSettings.Instance.Config;
-           Logger.Info(configlist.GetDebugView());
+            
 
             //load all assemblies
             CommandLine.Parser.Default.ParseArguments<LoadServiceOptions, KickoffOptions> (args)
@@ -58,8 +57,14 @@ namespace Jubanlabs.JubanDistributed {
                         Logger.ConditionalTrace ($"Current Arguments: -v {o.Verbose}");
                         Logger.ConditionalTrace ("Quick Start Example!");
                     }
-                    Logger.ConditionalTrace ("environment:" + o.Environment);
-                    AppSession.Instance.SetEnvironmentName( o.Environment);
+                    if (!AppSession.Instance.IsEnvironmentNameSet() || !o.Environment.Equals("testing",StringComparison.OrdinalIgnoreCase)){
+                        AppSession.Instance.SetEnvironmentName( o.Environment);
+                    }
+
+                    Logger.Info("environment:" +AppSession.Instance.GetEnvironmentName());
+                    IConfigurationRoot configlist =AppSettings.Instance.Config;
+                    Logger.Info(configlist.GetDebugView());
+                    
                     if (o is LoadServiceOptions) {
                         var options = (LoadServiceOptions) o;
                         if (options.service.Equals ("worker")) {
