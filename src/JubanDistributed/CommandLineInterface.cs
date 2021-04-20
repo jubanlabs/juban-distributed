@@ -4,6 +4,8 @@ using Jubanlabs.JubanDistributed.RPC;
 using Jubanlabs.JubanDistributed.WorkQueue;
 using Jubanlabs.JubanShared.Common;
 using NLog;
+using Jubanlabs.JubanShared.Common.Config;
+using Microsoft.Extensions.Configuration;
 
 namespace Jubanlabs.JubanDistributed {
     public class BaseOptions {
@@ -43,9 +45,10 @@ namespace Jubanlabs.JubanDistributed {
             /// kickoff
             /// -f fork
 
-            //load all assemblies
-           
+           IConfigurationRoot configlist =AppSettings.Instance.Config;
+           Logger.Info(configlist.GetDebugView());
 
+            //load all assemblies
             CommandLine.Parser.Default.ParseArguments<LoadServiceOptions, KickoffOptions> (args)
                 .WithParsed<BaseOptions> (o => {
                     if (o.Verbose) {
