@@ -13,4 +13,10 @@ namespace Jubanlabs.JubanDistributed
     {
 
     }
+
+    public interface IKickoff 
+    {
+        void FreshStart();
+        void Resume();
+    }
 }

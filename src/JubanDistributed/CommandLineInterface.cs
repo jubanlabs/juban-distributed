@@ -22,6 +22,9 @@ namespace Jubanlabs.JubanDistributed {
         
         [Option ("servicelibs", Required=false)]
         public string SserviceLibs { get; set; }
+
+        [Option ("classname", Required=false)]
+        public string ClassName { get; set; }
     }
 
     [Verb ("loadservice", HelpText = "loadservice <worker|rpc|delayedworkrunner>")]
@@ -36,6 +39,11 @@ namespace Jubanlabs.JubanDistributed {
         //commit options here
     }
 
+    [Verb ("runwork", HelpText = "runwork <kickoff|resume> ")]
+    class RunworkOptions: BaseOptions{
+
+    }
+
     public class CommandLineInterface {
         private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
         public void Main (string[] args) {
@@ -44,6 +52,8 @@ namespace Jubanlabs.JubanDistributed {
             /// loadservice delayedworkrunner
             /// kickoff
             /// -f fork
+            /// runwork kickoff 
+            /// runwork resume
 
             
 

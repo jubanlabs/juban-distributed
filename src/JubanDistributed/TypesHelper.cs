@@ -53,5 +53,14 @@ namespace Jubanlabs.JubanDistributed {
             Logger.ConditionalTrace ("GetInterfaceFromClass - " + distributableInterface);
             return distributableInterface;
         }
+
+        public static void NewAndInvoke(string classname,string methodname)
+        {
+            var type = RPCContext.TypesDict.Values.Where(s => s.Name == classname).First();
+            var methodInfo = type.GetMethod(methodname);
+            var invokerSub = FastInvoke.GetMethodInvoker(methodInfo);
+            var instance = Activator.CreateInstance(type);
+            invokerSub.Invoke(instance, new object[0]);
+        }
     }
 }
