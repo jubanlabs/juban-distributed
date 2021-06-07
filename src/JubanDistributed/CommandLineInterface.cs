@@ -21,8 +21,8 @@ namespace Jubanlabs.JubanDistributed {
         
         
         [Option ("servicelibs", Required=false)]
-        public string SserviceLibs { get; set; }
-
+        public string serviceLibs { get; set; }
+        
         [Option ("classname", Required=false)]
         public string ClassName { get; set; }
     }
@@ -34,14 +34,13 @@ namespace Jubanlabs.JubanDistributed {
         public string service { get; set; }
     }
 
-    [Verb ("kickoff", HelpText = "Record changes to the repository.")]
-    class KickoffOptions : BaseOptions {
-        //commit options here
-    }
 
-    [Verb ("runwork", HelpText = "runwork <kickoff|resume> ")]
-    class RunworkOptions: BaseOptions{
-
+    [Verb ("loadtask", HelpText = "loadtask <classname> <kickoff|resume> ")]
+    class LoadTaskOptions: BaseOptions{
+        [Value (0, Required = true)]
+        public string className { get; set; }
+        [Value (1, Required = true)]
+        public string actionType { get; set; }
     }
 
     public class CommandLineInterface {
@@ -52,13 +51,13 @@ namespace Jubanlabs.JubanDistributed {
             /// loadservice delayedworkrunner
             /// kickoff
             /// -f fork
-            /// runwork kickoff 
-            /// runwork resume
+            /// loadtask kickoff 
+            /// loadtask resume
 
             
 
             //load all assemblies
-            CommandLine.Parser.Default.ParseArguments<LoadServiceOptions, KickoffOptions> (args)
+            CommandLine.Parser.Default.ParseArguments<LoadServiceOptions, LoadTaskOptions> (args)
                 .WithParsed<BaseOptions> (o => {
                     if (o.Verbose) {
                         Logger.ConditionalTrace ($"Verbose output enabled. Current Arguments: -v {o.Verbose}");
@@ -87,6 +86,22 @@ namespace Jubanlabs.JubanDistributed {
                             Logger.ConditionalTrace("delayedworkrunner");
                             new DelayedWorkRunnerScheduler().Schedule();
                         }
+                    }
+
+                    if (o is LoadTaskOptions)
+                    {
+                        var options = (LoadTaskOptions)o;
+                        if (options.actionType.Equals("kickoff",StringComparison.Ordinal))
+                        {
+                            TypesHelper.NewAndInvoke(options.className, "FreshStart");
+                        }
+
+                        if (options.actionType.Equals("resume",StringComparison.Ordinal))
+                        {
+                            TypesHelper.NewAndInvoke(options.className, "Resume");
+                        }
+
+                        System.Environment.Exit(1);
                     }
                 });
         }
