@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Reflection;
 using Jubanlabs.JubanShared.Common;
+using NLog;
 
 namespace Jubanlabs.JubanDistributed.RPC {
     public class UniversalRPCInterpreter : IRPCInterpreter {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
         private ConcurrentDictionary<Type, object> objectFromInterface = new ConcurrentDictionary<Type, object> ();
 
         public byte[] Process (byte[] messsage) {

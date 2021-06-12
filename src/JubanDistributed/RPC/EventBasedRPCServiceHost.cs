@@ -1,5 +1,6 @@
 using System;
 using Jubanlabs.JubanDistributed.RabbitMQ;
+using NLog;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -9,7 +10,7 @@ namespace Jubanlabs.JubanDistributed.RPC {
 
         private readonly IRPCInterpreter processInstance;
 
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
         private IModel channel;
         private EventingBasicConsumer consumer;
         public EventBasedRPCServiceHost (IRPCInterpreter obj, string rpcName) {

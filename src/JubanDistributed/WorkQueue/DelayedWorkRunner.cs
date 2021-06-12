@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using NLog;
 using Quartz;
 using Quartz.Impl;
 
@@ -25,7 +26,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
     [PersistJobDataAfterExecution]
     public class DelayedWorkRunnerJob : IJob {
 
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
         public async Task Execute (IJobExecutionContext context) {
             try {
                 JobDataMap dataMap = context.JobDetail.JobDataMap;
@@ -76,7 +77,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
     public class DelayedWorkRunnerJobScheduler : IJob
     {
 
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public async Task Execute(IJobExecutionContext context)
         {
             IScheduler sched = await new StdSchedulerFactory().GetScheduler();

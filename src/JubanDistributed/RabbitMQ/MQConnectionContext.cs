@@ -8,7 +8,7 @@ using RabbitMQ.Client.Events;
 
 namespace Jubanlabs.JubanDistributed.RabbitMQ {
     public class MQConnectionContext {
-        private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static Logger Logger = LogManager.GetCurrentClassLogger ();
         private static MQConnectionContext instance = new MQConnectionContext ();
         public static MQConnectionContext Instance { get { return instance; } }
 

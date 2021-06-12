@@ -1,9 +1,10 @@
 ﻿using System;
 using Jubanlabs.JubanShared.Mongodb;
+using NLog;
 
 namespace Jubanlabs.JubanDistributed.WorkQueue {
     public class DelayedWorkDatabase : MgDatabase {
-        private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static Logger Logger = LogManager.GetCurrentClassLogger ();
 
         private static readonly Lazy<DelayedWorkDatabase> lazy =
             new Lazy<DelayedWorkDatabase>

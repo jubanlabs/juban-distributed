@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Jubanlabs.JubanDistributed.RabbitMQ;
+using NLog;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 
 namespace Jubanlabs.JubanDistributed.RPC {
 
 	public abstract class RPCClient {
-		private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
 		private IModel publisherChannel;
 		private string replyQueueName;
 

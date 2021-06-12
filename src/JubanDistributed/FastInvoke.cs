@@ -14,7 +14,7 @@ namespace Jubanlabs.JubanDistributed
         public static FastInvokeHandler GetMethodInvoker(MethodInfo methodInfo)
         {
             DynamicMethod dynamicMethod = new DynamicMethod(string.Empty, 
-                          typeof(object), new Type[] { typeof(object), 
+                          typeof(object), new[] { typeof(object), 
                           typeof(object[]) }, 
                           methodInfo.DeclaringType.GetTypeInfo().Module);
             ILGenerator il = dynamicMethod.GetILGenerator();
@@ -81,7 +81,7 @@ namespace Jubanlabs.JubanDistributed
         }
 
         private static void EmitCastToReference(ILGenerator il, 
-                                                System.Type type)
+                                                Type type)
         {
             if (type.GetTypeInfo().IsValueType)
             {
@@ -93,7 +93,7 @@ namespace Jubanlabs.JubanDistributed
             }
         }
 
-        private static void EmitBoxIfNeeded(ILGenerator il, System.Type type)
+        private static void EmitBoxIfNeeded(ILGenerator il, Type type)
         {
             if (type.GetTypeInfo().IsValueType)
             {

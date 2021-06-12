@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using Castle.DynamicProxy;
 using Jubanlabs.JubanDistributed.RPC;
-using Jubanlabs.JubanDistributed.WorkQueue;
+using NLog;
 
 namespace Jubanlabs.JubanDistributed {
 
     public class TypesHelper {
-        private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static Logger Logger = LogManager.GetCurrentClassLogger ();
         private static ConcurrentDictionary<Type, Type> typeFromInterface = new ConcurrentDictionary<Type, Type> ();
         public static Type GetFirstImplementedTypeFromInterface (Type interfaceType) {
             Type type;
@@ -24,9 +21,9 @@ namespace Jubanlabs.JubanDistributed {
                 typeFromInterface[interfaceType] = types[0];
                 type = types[0];
                 return type;
-            } else {
-                return typeFromInterface[interfaceType];
             }
+
+            return typeFromInterface[interfaceType];
 
         }
 

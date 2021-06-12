@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using Jubanlabs.JubanDistributed.RPC;
+using NLog;
 
 namespace Jubanlabs.JubanDistributed.WorkQueue {
     public static class ExMethods {
-        private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static Logger Logger = LogManager.GetCurrentClassLogger ();
         public static void StartWorker (this IDistributable instance) {
             Type distributableInterface =TypesHelper.GetDistributableInterface(instance.GetType());
             if (distributableInterface == null) {

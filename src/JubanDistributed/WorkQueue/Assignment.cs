@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Threading;
 using Jubanlabs.JubanDistributed.RabbitMQ;
+using NLog;
 using RabbitMQ.Client;
 
 namespace Jubanlabs.JubanDistributed.WorkQueue {
     public class Assignment {
         public delegate void CircuitBreakerHandler (String str);
         public event CircuitBreakerHandler CircuitBreakerEvent;
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
         // private static Bridge instance;
         //  private static readonly object initLocker = new object();
        

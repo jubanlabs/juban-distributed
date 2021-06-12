@@ -1,9 +1,10 @@
 ﻿using System;
+using NLog;
 
 namespace Jubanlabs.JubanDistributed.RPC {
     public static class ExMethods {
        
-private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+private static Logger Logger = LogManager.GetCurrentClassLogger ();
         public static void StartRPCService (this IDistributable instance) {
            Type distributableInterface = TypesHelper.GetDistributableInterface(instance.GetType());
             if (distributableInterface == null) {

@@ -2,8 +2,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Jubanlabs.JubanDistributed</PackageId>
-    <AssemblyVersion>0.2.2</AssemblyVersion>
-    <Version>0.2.2</Version>
+    <VersionPrefix>0.2.2</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+    <SourceRevisionId>$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
     <Authors>Zefei Ji</Authors>
     <RepositoryUrl>https://github.com/jubanlabs/juban-distributed</RepositoryUrl>
   </PropertyGroup>

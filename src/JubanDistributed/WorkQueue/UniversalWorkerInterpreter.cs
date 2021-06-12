@@ -1,18 +1,16 @@
 ﻿
+using System;
+using System.Reflection;
 using Jubanlabs.JubanDistributed.RPC;
 using MongoDB.Bson;
-using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+using NLog;
 
 namespace Jubanlabs.JubanDistributed.WorkQueue
 {
     
     public class UniversalWorkerInterpreter :IWorkInterpreter
     {
-        private static readonly NLog.Logger  Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger  Logger = LogManager.GetCurrentClassLogger();
         public IDistributable WorkerInstance { get; set; }
 
         public string queueName{get;set;}
@@ -47,7 +45,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue
 
             invokerSub(WorkerInstance, valuesArray);
             if(mesgObj.delayed){
-                DelayedWorkDatabase.Instance.GetDatabase().GetCollection<BsonDocument>(queueName).DeleteOne(new BsonDocument(){{"_id",ObjectId.Parse(mesgObj.id)}});
+                DelayedWorkDatabase.Instance.GetDatabase().GetCollection<BsonDocument>(queueName).DeleteOne(new BsonDocument {{"_id",ObjectId.Parse(mesgObj.id)}});
             }
         }
     }

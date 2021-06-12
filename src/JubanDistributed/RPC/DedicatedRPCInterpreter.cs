@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
+using NLog;
 
 namespace Jubanlabs.JubanDistributed.RPC {
     public class DedicatedRPCInterpreter : IRPCInterpreter {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
         private ConcurrentDictionary<Type, object> objectFromInterface = new ConcurrentDictionary<Type, object> ();
 
         public IDistributable Instance { get; internal set; }

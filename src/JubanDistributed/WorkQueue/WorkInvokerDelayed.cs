@@ -1,14 +1,9 @@
 ﻿
-using MongoDB.Bson;
 using Castle.DynamicProxy;
+using MongoDB.Bson;
 
 namespace Jubanlabs.JubanDistributed.WorkQueue {
     public class WorkInvokerDelayed : IInterceptor   {
-
-        public WorkInvokerDelayed () {
-
-        }
-
         public void Intercept(IInvocation invocation)
         {
             var message = new Message ();

@@ -1,10 +1,11 @@
 ﻿using System;
 using Castle.DynamicProxy;
 using Jubanlabs.JubanShared.Common;
+using NLog;
 
 namespace Jubanlabs.JubanDistributed.RPC {
     public class RPCInvoker : IInterceptor {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
         protected bool _enableRPC = true;
         protected RPCClient rpcClient;
 
@@ -78,7 +79,7 @@ namespace Jubanlabs.JubanDistributed.RPC {
         public DedicatedRPCClient (string rpcName) {
             this.rpcName = rpcName;
         }
-        public override string RPCName { get { return this.rpcName; } }
+        public override string RPCName { get { return rpcName; } }
 
     }
 

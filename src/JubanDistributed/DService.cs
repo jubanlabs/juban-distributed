@@ -28,9 +28,11 @@ namespace Jubanlabs.JubanDistributed {
             if (options.RPCQueueFormation == RPCQueueFormationEnum.UniversalRPCQueue) {
                 return  (IDistributable)proxyGenerator.CreateInterfaceProxyWithoutTarget(t,new RPCInvoker(options.IsRemoteCall));
                // return (IDistributable) Jubanlabs.ProxyEmitter.ProxyEmitter.CreateProxy (typeof (RPCInvoker), getInterfaceType (type), options.IsRemoteCall);
-            } else if (options.RPCQueueFormation == RPCQueueFormationEnum.PerService) {
-                 return  (IDistributable)proxyGenerator.CreateInterfaceProxyWithoutTarget(t,new DedicatedRCPInvoker(options.IsRemoteCall,t.FullName));
-               // return (IDistributable) Jubanlabs.ProxyEmitter.ProxyEmitter.CreateProxy (typeof (DedicatedRCPInvoker), t, options.IsRemoteCall, t.FullName);
+            }
+
+            if (options.RPCQueueFormation == RPCQueueFormationEnum.PerService) {
+                return  (IDistributable)proxyGenerator.CreateInterfaceProxyWithoutTarget(t,new DedicatedRCPInvoker(options.IsRemoteCall,t.FullName));
+                // return (IDistributable) Jubanlabs.ProxyEmitter.ProxyEmitter.CreateProxy (typeof (DedicatedRCPInvoker), t, options.IsRemoteCall, t.FullName);
             }
             return null;
         }
@@ -44,10 +46,10 @@ namespace Jubanlabs.JubanDistributed {
             if (options.IsPersistentAssignment) {
                 return  (IDistributable)proxyGenerator.CreateInterfaceProxyWithoutTarget(t,new WorkInvokerDelayed());
                // return (IDistributable) Jubanlabs.ProxyEmitter.ProxyEmitter.CreateProxy (typeof (WorkInvokerDelayed), getInterfaceType (type));
-            } else {
-                return  (IDistributable)proxyGenerator.CreateInterfaceProxyWithoutTarget(t,new WorkInvoker(options.IsRemoteCall));
-                //return (IDistributable) Jubanlabs.ProxyEmitter.ProxyEmitter.CreateProxy (typeof (WorkInvoker), getInterfaceType (type), options.IsRemoteCall);
             }
+
+            return  (IDistributable)proxyGenerator.CreateInterfaceProxyWithoutTarget(t,new WorkInvoker(options.IsRemoteCall));
+            //return (IDistributable) Jubanlabs.ProxyEmitter.ProxyEmitter.CreateProxy (typeof (WorkInvoker), getInterfaceType (type), options.IsRemoteCall);
 
         }
     }
@@ -116,15 +118,15 @@ public class PropertyChangeTrackingInterceptor : IInterceptor, IChangedPropertie
     {
         invocation.Proceed();
 
-        this.Properties.Add(invocation.Method.Name);
+        Properties.Add(invocation.Method.Name);
     }
 
     private HashSet<string> properties = new HashSet<string>();
 
     public HashSet<string> Properties
     {
-        get { return this.properties; }
-        private set { this.properties = value; }
+        get { return properties; }
+        private set { properties = value; }
     }
 }
 

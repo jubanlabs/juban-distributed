@@ -1,13 +1,15 @@
 using System;
 using CommandLine;
-using Jubanlabs.JubanDistributed.RPC;
 using Jubanlabs.JubanDistributed.WorkQueue;
 using Jubanlabs.JubanShared.Common;
-using NLog;
 using Jubanlabs.JubanShared.Common.Config;
 using Microsoft.Extensions.Configuration;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 
-namespace Jubanlabs.JubanDistributed {
+namespace Jubanlabs.JubanDistributed
+{
     public class BaseOptions {
         [Option ('v', "verbose", Required = false, HelpText = "Set output to verbose messages.")]
         public bool Verbose { get; set; }
@@ -44,20 +46,19 @@ namespace Jubanlabs.JubanDistributed {
     }
 
     public class CommandLineInterface {
-        private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static Logger Logger = LogManager.GetCurrentClassLogger ();
         public void Main (string[] args) {
             /// loadservice worker
             /// loadservice rpc
             /// loadservice delayedworkrunner
-            /// kickoff
             /// -f fork
-            /// loadtask kickoff 
+            /// loadtask kickoff  
             /// loadtask resume
 
             
 
             //load all assemblies
-            CommandLine.Parser.Default.ParseArguments<LoadServiceOptions, LoadTaskOptions> (args)
+            Parser.Default.ParseArguments<LoadServiceOptions, LoadTaskOptions> (args)
                 .WithParsed<BaseOptions> (o => {
                     if (o.Verbose) {
                         Logger.ConditionalTrace ($"Verbose output enabled. Current Arguments: -v {o.Verbose}");
@@ -101,23 +102,23 @@ namespace Jubanlabs.JubanDistributed {
                             TypesHelper.NewAndInvoke(options.className, "Resume");
                         }
 
-                        System.Environment.Exit(1);
+                        Environment.Exit(1);
                     }
                 });
         }
 
         public void SetLogTarget () {
-            var config = new NLog.Config.LoggingConfiguration ();
+            var config = new LoggingConfiguration ();
 
             // Targets where to log to: File and Console
 
-            var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
+            var logconsole = new ConsoleTarget("logconsole");
 
             // Rules for mapping loggers to targets            
             config.AddRuleForAllLevels (logconsole);
 
             // Apply config           
-            NLog.LogManager.Configuration = config;
+            LogManager.Configuration = config;
         }
     }
 

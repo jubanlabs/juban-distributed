@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using NLog;
 
 namespace Jubanlabs.JubanDistributed.RPC
 {
     public static class RPCContext
     {
-        private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static Logger Logger = LogManager.GetCurrentClassLogger ();
         public static Dictionary<string, Type> TypesDict;
         static RPCContext()
         {

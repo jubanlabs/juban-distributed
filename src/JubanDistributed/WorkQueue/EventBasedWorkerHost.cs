@@ -1,5 +1,6 @@
 ﻿using System;
 using Jubanlabs.JubanDistributed.RabbitMQ;
+using NLog;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -10,7 +11,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
 
         private readonly IWorkInterpreter processInstance;
 
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
         private IModel channel;
         private EventingBasicConsumer consumer;
         public EventBasedWorkerHost (IWorkInterpreter obj, string name) {
@@ -27,9 +28,9 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
                     {
                         byte[] body = ea.Body.ToArray();
 
-                        Logger.ConditionalTrace(DateTime.Now.ToString() + " " + processInstance.GetType().FullName + " begin process");
+                        Logger.ConditionalTrace(DateTime.Now + " " + processInstance.GetType().FullName + " begin process");
                         processInstance.Process(body);
-                        Logger.ConditionalTrace(DateTime.Now.ToString() + " " + processInstance.GetType().FullName + " finish process");
+                        Logger.ConditionalTrace(DateTime.Now + " " + processInstance.GetType().FullName + " finish process");
                         channel.BasicAck(ea.DeliveryTag, true);
                     }
                     catch(Exception ex)

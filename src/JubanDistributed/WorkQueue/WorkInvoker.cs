@@ -1,7 +1,7 @@
 ﻿
+using System;
 using Castle.DynamicProxy;
 using Jubanlabs.JubanDistributed.RPC;
-using System;
 
 namespace Jubanlabs.JubanDistributed.WorkQueue
 {
