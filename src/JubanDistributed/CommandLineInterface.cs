@@ -101,9 +101,9 @@ namespace Jubanlabs.JubanDistributed
                         {
                             TypesHelper.NewAndInvoke(options.className, "Resume");
                         }
-
-                        Environment.Exit(1);
                     }
+
+                    Console.WriteLine("Please press Ctrl+C to exit.");
                 });
         }
 
