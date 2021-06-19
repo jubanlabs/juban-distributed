@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using CommandLine;
 using Jubanlabs.JubanDistributed.WorkQueue;
 using Jubanlabs.JubanShared.Common;
@@ -45,18 +47,23 @@ namespace Jubanlabs.JubanDistributed
         public string actionType { get; set; }
     }
 
+    /// loadservice worker
+    /// loadservice rpc
+    /// loadservice delayedworkrunner
+    /// -f fork
+    /// loadtask kickoff  
+    /// loadtask resume
+
     public class CommandLineInterface {
         private static Logger Logger = LogManager.GetCurrentClassLogger ();
-        public void Main (string[] args) {
-            /// loadservice worker
-            /// loadservice rpc
-            /// loadservice delayedworkrunner
-            /// -f fork
-            /// loadtask kickoff  
-            /// loadtask resume
+
+        public void Main (IEnumerable<string> args) {
 
             
-
+            Logger.Info("JubanDistributed.CLI location: "+Assembly.GetExecutingAssembly().Location);
+            Logger.Info("JubanDistributed.CLI version: " + Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+            Logger.Info("JubanDistributed.CLI assembly version: " + Assembly.GetExecutingAssembly().GetName().Version);
+            
             //load all assemblies
             Parser.Default.ParseArguments<LoadServiceOptions, LoadTaskOptions> (args)
                 .WithParsed<BaseOptions> (o => {
@@ -76,7 +83,7 @@ namespace Jubanlabs.JubanDistributed
                     Logger.Info(configlist.GetDebugView());
                     
                     if (o is LoadServiceOptions) {
-                        var options = (LoadServiceOptions) o;
+                        var options = (LoadServiceOptions)o;
                         if (options.service.Equals ("worker")) {
                             Logger.ConditionalTrace ("loading workers");
                             new GeneralWorkerServiceLoader ().LoadWorker ();
