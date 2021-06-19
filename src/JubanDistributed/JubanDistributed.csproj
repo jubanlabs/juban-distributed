@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/jubanlabs/juban-distributed</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Jubanlabs.JubanShared" Version="0.2.3" />
+    <PackageReference Include="Jubanlabs.JubanShared" Version="0.2.*-*" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
     <PackageReference Include="protobuf-net" Version="3.0.101" />
