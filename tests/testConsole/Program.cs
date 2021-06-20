@@ -15,11 +15,7 @@ namespace testConsole {
             var host = CreateHostBuilder(args).Build().JubanWireup();
             
             var cli = host.Services.GetService<ICommandLineInterface>();
-            var config =host.Services.GetService<IConfiguration>();
-            var logger = JubanLogger.GetLogger<Program>();
-            logger.LogInformation("hello from juban logger");
-            
-            Console.WriteLine(config["jubandistributed.delayedWorkerStorage.mongodb"]);
+            cli.Main(args);
             var hostTask= host.RunAsync();
             Console.WriteLine("abc");
             await hostTask;
