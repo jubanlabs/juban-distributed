@@ -85,11 +85,12 @@ namespace Jubanlabs.JubanDistributed
                     Logger.LogInformation("environment:" +AppSession.Instance.GetEnvironmentName());
                     IConfigurationRoot configlist =AppSettings.Instance.Config;
                     Logger.LogInformation(configlist.GetDebugView());
-                    
+                    Logger.LogInformation((o is LoadServiceOptions).ToString());
                     if (o is LoadServiceOptions) {
                         var options = (LoadServiceOptions)o;
+                        Logger.LogInformation(options.service);
                         if (options.service.Equals ("worker")) {
-                            Logger.LogTrace ("loading workers");
+                            Logger.LogInformation("loading workers");
                             new GeneralWorkerServiceLoader ().LoadWorker ();
                         }
 
