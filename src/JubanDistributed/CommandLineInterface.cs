@@ -54,7 +54,12 @@ namespace Jubanlabs.JubanDistributed
     /// loadtask kickoff  
     /// loadtask resume
 
-    public class CommandLineInterface {
+
+    public interface ICommandLineInterface
+    {
+        void Main(IEnumerable<string> args);
+    }
+    public class CommandLineInterface : ICommandLineInterface{
         private static Logger Logger = LogManager.GetCurrentClassLogger ();
 
         public void Main (IEnumerable<string> args) {

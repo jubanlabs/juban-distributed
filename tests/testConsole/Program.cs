@@ -1,42 +1,37 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Jubanlabs.JubanDistributed;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace testConsole {
     class Program {
-        static void Main (string[] args) {
-            var cml =new CommandLineInterface();
-            cml.SetLogTarget();
-            cml.Main(args);
+        static async Task Main (string[] args)
+        {
+            var host = CreateHostBuilder(args).Build().JubanWireup();
             
- var gen=new ProxyGenerator();
- var worker = (ICalcWorker)gen.CreateInterfaceProxyWithoutTarget(typeof(ICalcWorker),new TestingInterceptor());
- Console.WriteLine(worker.plus(2,3));
- worker.noReturn(4);
-            Console.WriteLine("Press any key to close the application");
-            Console.ReadKey();
+            var cli = host.Services.GetService<ICommandLineInterface>();
+            var config =host.Services.GetService<IConfiguration>();
+            var logger = JubanLogger.GetLogger<Program>();
+            logger.LogInformation("hello from juban logger");
+            
+            Console.WriteLine(config["jubandistributed.delayedWorkerStorage.mongodb"]);
+            var hostTask= host.RunAsync();
+            Console.WriteLine("abc");
+            await hostTask;
         }
        
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, collection) =>
+                {
+                    collection.AddSingleton<ICommandLineInterface, CommandLineInterface>();
+                    //services.AddHostedService<Worker>();
+                });
     }
 
-
-public class TestingInterceptor : IInterceptor
-{
-    public void Intercept(IInvocation invocation)
-    {
-       Console.WriteLine("abc");
-       
-foreach (var item in invocation.Proxy.GetType().GetInterfaces())
-{
-    Console.WriteLine(item.FullName);
-}
-        var methodInfo=invocation.Method;
-        Console.WriteLine(methodInfo.ReturnType.FullName);
-        if(methodInfo.ReturnType!=typeof(void)){
-        invocation.ReturnValue=4;
-        }
-    }
-
-}
   
 }

@@ -3,6 +3,8 @@
   <ItemGroup>
    
     <PackageReference Include="Jubanlabs.JubanShared" Version="0.2.3" />
+   
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <ProjectReference Include="..\..\src\JubanDistributed\JubanDistributed.csproj" />
     <PackageReference Include="Castle.Core" Version="4.4.1" />
   </ItemGroup>
