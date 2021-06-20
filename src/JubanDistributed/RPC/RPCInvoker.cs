@@ -1,11 +1,13 @@
 ﻿using System;
 using Castle.DynamicProxy;
 using Jubanlabs.JubanShared.Common;
-using NLog;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Jubanlabs.JubanDistributed.RPC {
     public class RPCInvoker : IInterceptor {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
+        private static readonly ILogger<RPCInvoker> Logger =  JubanLogger.GetLogger<RPCInvoker>();
         protected bool _enableRPC = true;
         protected RPCClient rpcClient;
 
@@ -26,7 +28,7 @@ namespace Jubanlabs.JubanDistributed.RPC {
 
             var message = new Message ();
             message.type = TypesHelper.GetDistributableInterface(invocation.Proxy.GetType()).FullName;
-            Logger.Info (message.type);
+            Logger.LogInformation (message.type);
             message.method = methodName;
             if (invocation.Arguments != null) {
                 message.types = new string[invocation.Arguments.Length];

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Reflection;
 using Jubanlabs.JubanShared.Common;
-using NLog;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Jubanlabs.JubanDistributed.RPC {
     public class UniversalRPCInterpreter : IRPCInterpreter {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
+        private static readonly ILogger<UniversalRPCInterpreter> Logger =  JubanLogger.GetLogger<UniversalRPCInterpreter>();
         private ConcurrentDictionary<Type, object> objectFromInterface = new ConcurrentDictionary<Type, object> ();
 
         public byte[] Process (byte[] messsage) {
@@ -14,7 +16,7 @@ namespace Jubanlabs.JubanDistributed.RPC {
             {
             ConditionalStopwatch.PunchIn ("UniversalRPCInterpreter");
             var mesgObj = (Message) Utils.Deserialize (messsage, typeof (Message));
-            Logger.ConditionalTrace("UniversalRPCInterpreter "+mesgObj.type+" "+mesgObj.method);
+            Logger.LogTrace("UniversalRPCInterpreter "+mesgObj.type+" "+mesgObj.method);
 
             //"JubanDistributed.RPCInvokerCommon.Test.IRemoteUtilsProxy"
             string typeName = mesgObj.type;
@@ -60,7 +62,7 @@ namespace Jubanlabs.JubanDistributed.RPC {
             }
             catch(Exception ex)
             {
-                Logger.Error(ex,"process error : " + ex.StackTrace);
+                Logger.LogError(ex,"process error : " + ex.StackTrace);
                 throw ex;
             }
         }

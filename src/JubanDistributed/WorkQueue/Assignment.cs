@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Threading;
 using Jubanlabs.JubanDistributed.RabbitMQ;
-using NLog;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
 namespace Jubanlabs.JubanDistributed.WorkQueue {
     public class Assignment {
         public delegate void CircuitBreakerHandler (String str);
         public event CircuitBreakerHandler CircuitBreakerEvent;
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
+        private static readonly ILogger<Assignment> Logger =  JubanLogger.GetLogger<Assignment>();
         // private static Bridge instance;
         //  private static readonly object initLocker = new object();
        
@@ -61,7 +62,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
                     }
 
                 } catch (Exception ex) {
-                    Logger.Error (ex, "send message failed. msg:" + data);
+                    Logger.LogError (ex, "send message failed. msg:" + data);
 
                     throw;
                 }
@@ -74,7 +75,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
             while (true) {
                 if (MessageCount >= BufferCount) {
                     OnCircuitBreaker ("circuit breaker occured");
-                    Logger.ConditionalTrace ("queue is not empty,sleeping ...");
+                    Logger.LogTrace ("queue is not empty,sleeping ...");
                     Thread.Sleep (1000);
                     continue;
                 }

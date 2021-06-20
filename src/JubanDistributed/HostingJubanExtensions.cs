@@ -1,4 +1,5 @@
 using System;
+using Jubanlabs.JubanShared.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

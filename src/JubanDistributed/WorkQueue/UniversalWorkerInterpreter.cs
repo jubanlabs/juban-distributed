@@ -2,15 +2,17 @@
 using System;
 using System.Reflection;
 using Jubanlabs.JubanDistributed.RPC;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
-using NLog;
+
 
 namespace Jubanlabs.JubanDistributed.WorkQueue
 {
     
     public class UniversalWorkerInterpreter :IWorkInterpreter
     {
-        private static readonly Logger  Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger<UniversalWorkerInterpreter> Logger =  JubanLogger.GetLogger<UniversalWorkerInterpreter>();
         public IDistributable WorkerInstance { get; set; }
 
         public string queueName{get;set;}

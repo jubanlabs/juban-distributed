@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using NLog;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Jubanlabs.JubanDistributed.WorkQueue {
     public static class ExMethods {
-        private static Logger Logger = LogManager.GetCurrentClassLogger ();
+        private static ILogger Logger =  JubanLogger.GetLogger(typeof(ExMethods).FullName);
         public static void StartWorker (this IDistributable instance) {
             Type distributableInterface =TypesHelper.GetDistributableInterface(instance.GetType());
             if (distributableInterface == null) {
-                Logger.ConditionalTrace ("worker interface not found");
+                Logger.LogTrace ("worker interface not found");
                 return;
             }
 
@@ -28,7 +30,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
                 workerInterpreter.WorkerInstance = instance;
                 workerInterpreter.queueName = queueName;
                 EventBasedWorkerHost worker = new EventBasedWorkerHost (workerInterpreter, queueName);
-                Logger.ConditionalTrace (queueName);
+                Logger.LogTrace (queueName);
             }
         }
 

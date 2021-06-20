@@ -2,13 +2,14 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Jubanlabs.JubanShared.Common.Config;
-using NLog;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace Jubanlabs.JubanDistributed.RabbitMQ {
     public class MQConnectionContext {
-        private static Logger Logger = LogManager.GetCurrentClassLogger ();
+        private static ILogger<MQConnectionContext> Logger =  JubanLogger.GetLogger<MQConnectionContext>();
         private static MQConnectionContext instance = new MQConnectionContext ();
         public static MQConnectionContext Instance { get { return instance; } }
 
@@ -17,7 +18,7 @@ namespace Jubanlabs.JubanDistributed.RabbitMQ {
                 HostName = AppSettings.Instance.GetValue ("jubandistributed.messagingServer"),
                 Port = 5672
             };
-            Logger.ConditionalTrace (factory.HostName);
+            Logger.LogTrace (factory.HostName);
             ConnectionForPublisher = factory.CreateConnection ();
             ConnectionForConsumer = factory.CreateConnection ();
             //System.Threading.Thread.CurrentThread.ManagedThreadId
@@ -66,8 +67,8 @@ namespace Jubanlabs.JubanDistributed.RabbitMQ {
 
                         var consumer = new EventingBasicConsumer (channel);
                         consumer.Received += (model, ea) => {
-                            //Logger.ConditionalTrace("trace rpc time: MQReceivedResponse " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
-                            //Logger.ConditionalTrace(rpcName + "-" + System.Threading.Thread.CurrentThread.ManagedThreadId); 
+                            //Logger.LogTrace("trace rpc time: MQReceivedResponse " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+                            //Logger.LogTrace(rpcName + "-" + System.Threading.Thread.CurrentThread.ManagedThreadId); 
 
                             if (!CallbackMapper.TryRemove (ea.BasicProperties.CorrelationId, out TaskCompletionSource<byte[]> tcs))
                                 return;

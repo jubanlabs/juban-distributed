@@ -3,12 +3,14 @@ using System.Collections.Concurrent;
 using System.Linq;
 using Castle.DynamicProxy;
 using Jubanlabs.JubanDistributed.RPC;
-using NLog;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Jubanlabs.JubanDistributed {
 
     public class TypesHelper {
-        private static Logger Logger = LogManager.GetCurrentClassLogger ();
+        private static ILogger<TypesHelper> Logger =  JubanLogger.GetLogger<TypesHelper>();
         private static ConcurrentDictionary<Type, Type> typeFromInterface = new ConcurrentDictionary<Type, Type> ();
         public static Type GetFirstImplementedTypeFromInterface (Type interfaceType) {
             Type type;
@@ -47,7 +49,7 @@ namespace Jubanlabs.JubanDistributed {
                 }
             }
 
-            Logger.ConditionalTrace ("GetInterfaceFromClass - " + distributableInterface);
+            Logger.LogTrace ("GetInterfaceFromClass - " + distributableInterface);
             return distributableInterface;
         }
 

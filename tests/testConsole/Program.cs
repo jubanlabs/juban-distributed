@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Jubanlabs.JubanDistributed;
+using Jubanlabs.JubanShared.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

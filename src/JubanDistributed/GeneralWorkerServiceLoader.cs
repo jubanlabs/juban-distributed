@@ -3,8 +3,9 @@ using System.Linq;
 using Jubanlabs.JubanDistributed;
 using Jubanlabs.JubanDistributed.RPC;
 using Jubanlabs.JubanDistributed.WorkQueue;
+using Jubanlabs.JubanShared.Logging;
 using Microsoft.Extensions.Logging;
-using NLog;
+
 
 public class GeneralWorkerServiceLoader {
     private static ILogger<GeneralWorkerServiceLoader> Logger =  JubanLogger.GetLogger<GeneralWorkerServiceLoader>();

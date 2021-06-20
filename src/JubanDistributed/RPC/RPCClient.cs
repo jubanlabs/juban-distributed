@@ -2,13 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Jubanlabs.JubanDistributed.RabbitMQ;
-using NLog;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
 namespace Jubanlabs.JubanDistributed.RPC {
 
 	public abstract class RPCClient {
-		private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
+		private static readonly ILogger<RPCClient> Logger =  JubanLogger.GetLogger<RPCClient>();
 		private IModel publisherChannel;
 		private string replyQueueName;
 
@@ -21,7 +22,7 @@ namespace Jubanlabs.JubanDistributed.RPC {
 				publisherChannel = MQConnectionContext.Instance.GetChannelForPublisher ();
 			}
 			//ConditionalStopwatch.PunchIn ("RPCClient.Call");
-			//Logger.ConditionalTrace("trace rpc time RPCClient: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+			//Logger.LogTrace("trace rpc time RPCClient: " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 			var correlationId = Guid.NewGuid ().ToString ();
 			lock (publisherChannel) {
 				IBasicProperties props = publisherChannel.CreateBasicProperties ();
@@ -32,7 +33,7 @@ namespace Jubanlabs.JubanDistributed.RPC {
 				publisherChannel.BasicPublish ("", "rpc_queue_" + RPCName, props, message);
 			}
 
-			//Logger.ConditionalTrace (Task.CurrentId + " " + this.GetHashCode () + " " +
+			//Logger.LogTrace (Task.CurrentId + " " + this.GetHashCode () + " " +
 			//	" " + replyProperties.ReplyTo);
 			var tcs = new TaskCompletionSource<byte[]> ();
 			MQConnectionContext.Instance.CallbackMapper.TryAdd (correlationId, tcs);

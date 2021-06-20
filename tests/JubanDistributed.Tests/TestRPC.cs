@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Jubanlabs.JubanDistributed.RPC;
 using Jubanlabs.JubanShared.Common;
-using Jubanlabs.JubanShared.UnitTest;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtoBuf;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Jubanlabs.JubanDistributed.Tests {
 
@@ -33,14 +33,14 @@ namespace Jubanlabs.JubanDistributed.Tests {
 
     public class RemoteUtils : IRemoteUtils {
 
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+        private static readonly ILogger<RemoteUtils> Logger =  JubanLogger.GetLogger<RemoteUtils>();
         public string MethodWithSimpleReturnObject (String abc) {
             // Stopwatch stopWatch = Stopwatch.StartNew ();
-            // Logger.ConditionalTrace ("begin rpc function sleep");
+            // Logger.LogTrace ("begin rpc function sleep");
             // Task.Delay (3000).Wait ();
             // stopWatch.Stop ();
             // TimeSpan timespan = stopWatch.Elapsed;
-            // Logger.ConditionalTrace ("end rpc function sleep, time spent:" + timespan.TotalMilliseconds);
+            // Logger.LogTrace ("end rpc function sleep, time spent:" + timespan.TotalMilliseconds);
             return abc;
         }
 
@@ -75,11 +75,10 @@ namespace Jubanlabs.JubanDistributed.Tests {
 
     delegate int delType (int a, string b);
 
-    public class TestRPC : IClassFixture<BaseFixture> {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
-        public TestRPC (ITestOutputHelper outputHelper) {
-            LoggingHelper.BindNLog (outputHelper);
-        }
+    [TestClass]
+    public class TestRPC :JubanTestBase{
+        private static readonly ILogger<TestRPC> Logger =  JubanLogger.GetLogger<TestRPC>();
+
 
         private void consumeRPC (IRemoteUtils service) {
             Stopwatch stopWatch = Stopwatch.StartNew ();
@@ -87,45 +86,45 @@ namespace Jubanlabs.JubanDistributed.Tests {
             //var service =new RemoteUtils();
             var task = Task.Run (() => {
                 TimeSpan s1 = stopWatch.Elapsed;
-                Logger.ConditionalTrace ("a begin " + s1.TotalMilliseconds);
+                Logger.LogTrace ("a begin " + s1.TotalMilliseconds);
                 //Task.Delay(500).Wait();
                 String str = service.MethodWithSimpleReturnObject ("xxx");
                 TimeSpan s2 = stopWatch.Elapsed;
                 // stopWatch.Restart ();
 
-                Logger.ConditionalTrace ("a end " + s2.TotalMilliseconds);
-                Assert.Equal ("xxx", str);
+                Logger.LogTrace ("a end " + s2.TotalMilliseconds);
+                Assert.AreEqual ("xxx", str);
             });
 
             DummySubClass dummy = service.MethodWithReturnObject (111);
 
-            Assert.Equal (111, dummy.Prop1);
+            Assert.AreEqual (111, dummy.Prop1);
             dummy.Prop1 = 234;
-            Assert.Equal (234, service.MethodWithParameterObjectAndReturnObject (dummy).Prop1);
+            Assert.AreEqual (234, service.MethodWithParameterObjectAndReturnObject (dummy).Prop1);
             dummy.Prop1 = 235;
-            Assert.Equal (235, service.MethodWithParameterObjectAndReturnObject (dummy).Prop1);
+            Assert.AreEqual (235, service.MethodWithParameterObjectAndReturnObject (dummy).Prop1);
             // Assert.Null (service.VerifyMethodWithNoReturnObject ());
             //Assert.Null (service.VerifyMethodWithNoParameterAndNoReturnObject ());
             // service.MethodWithNoParameterAndNoReturnObject ();
-            // Assert.Equal ("MethodWithNoParameterAndNoReturnObject", service.VerifyMethodWithNoParameterAndNoReturnObject ());
+            // Assert.AreEqual ("MethodWithNoParameterAndNoReturnObject", service.VerifyMethodWithNoParameterAndNoReturnObject ());
             //  service.MethodWithNoReturnObject ("MethodWithNoReturnObject");
-            // Logger.ConditionalTrace (service.VerifyMethodWithNoReturnObject ());
-            //Assert.Equal ("MethodWithNoReturnObject", service.VerifyMethodWithNoReturnObject ());
+            // Logger.LogTrace (service.VerifyMethodWithNoReturnObject ());
+            //Assert.AreEqual ("MethodWithNoReturnObject", service.VerifyMethodWithNoReturnObject ());
             dummy.Prop1 = 236;
-            Assert.Equal (236, service.MethodWithParameterObjectAndReturnObject (dummy).Prop1);
+            Assert.AreEqual (236, service.MethodWithParameterObjectAndReturnObject (dummy).Prop1);
             dummy = service.MethodWithReturnObject (111);
-            Assert.Equal (111, dummy.Prop1);
+            Assert.AreEqual (111, dummy.Prop1);
             dummy.Prop1 = 237;
-            Assert.Equal (237, service.MethodWithParameterObjectAndReturnObject (dummy).Prop1);
-            Logger.ConditionalTrace ("xxx");
+            Assert.AreEqual (237, service.MethodWithParameterObjectAndReturnObject (dummy).Prop1);
+            Logger.LogTrace ("xxx");
             task.Wait ();
             stopWatch.Stop ();
             TimeSpan timespan = stopWatch.Elapsed;
-            Logger.ConditionalTrace ("end, time spent:" + timespan.TotalMilliseconds);
+            Logger.LogTrace ("end, time spent:" + timespan.TotalMilliseconds);
 
         }
 
-        [Fact]
+        [TestMethod]
         public void testRPCTestService () {
             var serviceProvider = new RPCTestService ();
             serviceProvider.StartRPCService ();
@@ -136,18 +135,18 @@ namespace Jubanlabs.JubanDistributed.Tests {
 
             ConditionalStopwatch.PunchOutAndIn ("t1");
 
-            Assert.Equal (123, service.SimpleTestReturnInputInteger (123));
+            Assert.AreEqual (123, service.SimpleTestReturnInputInteger (123));
             ConditionalStopwatch.PunchOutAndIn ("t1");
-            Assert.Equal (123, service.SimpleTestReturnInputInteger (123));
+            Assert.AreEqual (123, service.SimpleTestReturnInputInteger (123));
             ConditionalStopwatch.PunchOutAndIn ("t1");
-            Assert.Equal (123, service.SimpleTestReturnInputInteger (123));
+            Assert.AreEqual (123, service.SimpleTestReturnInputInteger (123));
 
             ConditionalStopwatch.PunchOut ("t1");
 
             // Debug.Assert()
         }
 
-        [Fact]
+        [TestMethod]
         public void testRPCClientWithRPCServer () {
             UniversalRPCServer.Start ();
             UniversalRPCServer.Start ();
@@ -163,7 +162,7 @@ namespace Jubanlabs.JubanDistributed.Tests {
             return;
         }
 
-        [Fact]
+        [TestMethod]
         public void testRPCClientWithoutRPCServer () {
 
             var service = (IRemoteUtils) DService.getRPCService (typeof (IRemoteUtils),
@@ -171,7 +170,7 @@ namespace Jubanlabs.JubanDistributed.Tests {
             consumeRPC (service);
         }
 
-        [Fact]
+        [TestMethod]
         public void testInvoker () {
             // while(!Debugger.IsAttached) Thread.Sleep(500);
             //
@@ -182,12 +181,12 @@ namespace Jubanlabs.JubanDistributed.Tests {
             //         //   getter("", "");
             var obj = new DummyClass ();
             var dummyClass = Type.GetType ("Jubanlabs.JubanDistributed.Tests.DummyClass");
-            Logger.ConditionalTrace ("zzz");
-            Logger.ConditionalTrace (dummyClass.ToString ());
+            Logger.LogTrace ("zzz");
+            Logger.LogTrace (dummyClass.ToString ());
             var method = dummyClass.GetMethod ("DummyCall", new Type[] { typeof (int), typeof (String) });
             var method1 = dummyClass.GetMethod ("DummyCall", new Type[] { typeof (DummySubClass) });
             var m = (delType) method.CreateDelegate (typeof (delType), obj);
-            Logger.ConditionalTrace (m (3, "5").ToString ());
+            Logger.LogTrace (m (3, "5").ToString ());
             Func<int, int> twice = x => x * 2;
             const int LOOP = 5000000; // 5M
             var watch = Stopwatch.StartNew ();
@@ -195,20 +194,20 @@ namespace Jubanlabs.JubanDistributed.Tests {
                 twice.Invoke (3);
             }
             watch.Stop ();
-            Logger.ConditionalTrace ("Invoke: {0}ms", watch.ElapsedMilliseconds);
+            Logger.LogTrace ("Invoke: {0}ms", watch.ElapsedMilliseconds);
             watch = Stopwatch.StartNew ();
             for (int i = 0; i < LOOP; i++) {
                 twice.DynamicInvoke (3);
             }
             watch.Stop ();
-            Logger.ConditionalTrace ("DynamicInvoke: {0}ms", watch.ElapsedMilliseconds);
+            Logger.LogTrace ("DynamicInvoke: {0}ms", watch.ElapsedMilliseconds);
 
             watch = Stopwatch.StartNew ();
             for (int i = 0; i < LOOP; i++) {
                 m (5, "");
             }
             watch.Stop ();
-            Logger.ConditionalTrace ("delegate: {0}ms", watch.ElapsedMilliseconds);
+            Logger.LogTrace ("delegate: {0}ms", watch.ElapsedMilliseconds);
 
             object[] objarr = new object[] { 5, "" };
             watch = Stopwatch.StartNew ();
@@ -216,7 +215,7 @@ namespace Jubanlabs.JubanDistributed.Tests {
                 method.Invoke (obj, objarr);
             }
             watch.Stop ();
-            Logger.ConditionalTrace ("method.invoke: {0}ms", watch.ElapsedMilliseconds);
+            Logger.LogTrace ("method.invoke: {0}ms", watch.ElapsedMilliseconds);
 
             var invoker = FastInvoke.GetMethodInvoker (method);
             watch = Stopwatch.StartNew ();
@@ -225,12 +224,12 @@ namespace Jubanlabs.JubanDistributed.Tests {
                 invoker (obj, objarr);
             }
             watch.Stop ();
-            Logger.ConditionalTrace ("fastinvoker: {0}ms", watch.ElapsedMilliseconds);
+            Logger.LogTrace ("fastinvoker: {0}ms", watch.ElapsedMilliseconds);
 
             var invokerSub = FastInvoke.GetMethodInvoker (method1);
             var sub = new DummySubClass ();
             sub.Prop1 = 271;
-            Logger.ConditionalTrace (invokerSub (obj, new object[] { sub }).ToString ());
+            Logger.LogTrace (invokerSub (obj, new object[] { sub }).ToString ());
 
             // var service =DService.newRPCService<IDummyClass> (false);        
             // watch = Stopwatch.StartNew ();
@@ -239,7 +238,7 @@ namespace Jubanlabs.JubanDistributed.Tests {
 
             // }
             // watch.Stop ();
-            // Logger.ConditionalTrace ("fastinvoker: {0}ms", watch.ElapsedMilliseconds);
+            // Logger.LogTrace ("fastinvoker: {0}ms", watch.ElapsedMilliseconds);
         }
 
         public object TypeConvert (object source, Type DestType) {
@@ -271,9 +270,9 @@ namespace Jubanlabs.JubanDistributed.Tests {
         //  public int DummyCall(DummySubClass sub,int a){
         //     return sub.Prop1+a;
         // }
-private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+private static ILogger<DummyClass> Logger =  JubanLogger.GetLogger<DummyClass>();
         public void DummyCall (DummySubClass sub, int a) {
-            Logger.ConditionalTrace ("xxx");
+            Logger.LogTrace ("xxx");
         }
     }
 }

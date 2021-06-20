@@ -1,10 +1,13 @@
 using System;
 using System.Threading.Tasks;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using NLog;
+
 using Quartz;
 using Quartz.Impl;
+using Quartz.Logging;
 
 namespace Jubanlabs.JubanDistributed.WorkQueue {
     public class DelayedWorkRunner {
@@ -26,7 +29,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
     [PersistJobDataAfterExecution]
     public class DelayedWorkRunnerJob : IJob {
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger ();
+        private static readonly ILogger<DelayedWorkRunnerJob> Logger =  JubanLogger.GetLogger<DelayedWorkRunnerJob>();
         public async Task Execute (IJobExecutionContext context) {
             try {
                 JobDataMap dataMap = context.JobDetail.JobDataMap;
@@ -37,7 +40,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
                 var collection = DelayedWorkDatabase.Instance.GetDatabase().GetCollection<BsonDocument> (queueName);
                 FilterDefinition<BsonDocument> filter;
                 if (lastId != null) {
-                    Logger.ConditionalTrace (DateTime.Now + " lastId " + lastId);
+                    Logger.LogTrace (DateTime.Now + " lastId " + lastId);
                     filter = Builders<BsonDocument>.Filter.Gt ("_id", ObjectId.Parse (lastId));
                 } else {
                     filter = new BsonDocument ();
@@ -50,7 +53,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
                 int count = list.Count;
 
                 if (count == 0) {
-                    Logger.ConditionalTrace (DateTime.Now + " no new record found for " + queueName);
+                    Logger.LogTrace (DateTime.Now + " no new record found for " + queueName);
                     int interval = dataMap.GetInt ("interval");
                     if (interval < 30) {
                         interval++;
@@ -62,9 +65,9 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
                     dataMap.Put ("lastId", list[list.Count - 1]["_id"].ToString ());
                 }
 
-                Logger.ConditionalTrace (DateTime.Now + " Delayed work runner job for queue " + queueName);
+                Logger.LogTrace (DateTime.Now + " Delayed work runner job for queue " + queueName);
             } catch (Exception ex) {
-                Logger.Error (ex, DateTime.Now + "Error: Delayed work runner job for queue " + ex.Message + " " + ex.StackTrace);
+                Logger.LogError (ex, DateTime.Now + "Error: Delayed work runner job for queue " + ex.Message + " " + ex.StackTrace);
                 throw ex;
             }
         }
@@ -77,14 +80,14 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
     public class DelayedWorkRunnerJobScheduler : IJob
     {
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger<DelayedWorkRunnerJobScheduler> Logger =  JubanLogger.GetLogger<DelayedWorkRunnerJobScheduler>();
         public async Task Execute(IJobExecutionContext context)
         {
             IScheduler sched = await new StdSchedulerFactory().GetScheduler();
             
             var queueNameList = DelayedWorkDatabase.Instance.GetDatabase().ListCollectionNames().ToList();
             
-            Logger.ConditionalTrace("queueNameList count:" + queueNameList.Count);
+            Logger.LogTrace("queueNameList count:" + queueNameList.Count);
 
             foreach (var item in queueNameList)
             {
@@ -109,7 +112,7 @@ namespace Jubanlabs.JubanDistributed.WorkQueue {
                 }
                 else
                 {
-                    Logger.Info("job exist:"+ item);
+                    Logger.LogInformation("job exist:"+ item);
                 }
             }
         }

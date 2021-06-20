@@ -10,8 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Jubanlabs.JubanShared" Version="0.2.*-*" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
     <PackageReference Include="protobuf-net" Version="3.0.101" />

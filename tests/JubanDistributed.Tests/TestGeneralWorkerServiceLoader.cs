@@ -2,22 +2,20 @@
 using System;
 using System.Linq;
 using Jubanlabs.JubanDistributed.RPC;
-using Jubanlabs.JubanShared.UnitTest;
-using Xunit;
-using Xunit.Abstractions;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Jubanlabs.JubanDistributed.Tests
 {
-    public class TestMongodb : IClassFixture<BaseFixture>
+    [TestClass]
+    public class TestMongodb :JubanTestBase
     {
-        private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static ILogger<TestMongodb> Logger =  JubanLogger.GetLogger<TestMongodb>();
 
-        public TestMongodb(ITestOutputHelper outputHelper)
-        {
-            LoggingHelper.BindNLog(outputHelper);
-        }
+      
 
-        // [Fact]
+        // [TestMethod]
         // public void testLoader () {
         //     // var a = TestDatabase.Instance.testCollection.GetFirstCollection ();
         //     // long count = a.CountDocuments (new BsonDocument ());
@@ -25,16 +23,18 @@ namespace Jubanlabs.JubanDistributed.Tests
 
         // }
 
-        [Fact]
+        [TestMethod]
         public void testKickoff()
         {
+            
+            JubanLogger.GetLogger<KickoffTest>().LogInformation("abx");
             TypesHelper.NewAndInvoke("KickoffTest", "FreshStart");
-            Assert.Equal(1, freshStartCount);
+            Assert.AreEqual(1, freshStartCount);
 
             TypesHelper.NewAndInvoke("KickoffTest", "Resume");
             TypesHelper.NewAndInvoke("KickoffTest", "Resume");
             
-            Assert.Equal(2, resumeCount);
+            Assert.AreEqual(2, resumeCount);
         }
         public static int freshStartCount = 0;
         public static int resumeCount = 0;
@@ -42,16 +42,16 @@ namespace Jubanlabs.JubanDistributed.Tests
 
     public class KickoffTest : IKickoff
     {
-        private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static ILogger<KickoffTest> Logger =  JubanLogger.GetLogger<KickoffTest>();
         public void FreshStart()
         {
-            Logger.Info("freshstart consumed");
+            Logger.LogInformation("freshstart consumed");
             TestMongodb.freshStartCount++;
         }
 
         public void Resume()
         {
-            Logger.Info("resume consumed");
+            Logger.LogInformation("resume consumed");
             TestMongodb.resumeCount++;
         }
     }

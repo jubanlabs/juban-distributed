@@ -5,14 +5,17 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Jubanlabs.JubanDistributed;
 using Jubanlabs.JubanDistributed.Tests;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtoBuf;
-using Xunit;
 
 namespace Jubanlabs.JubanDistributed.Common.Test
 {
-    public class TestProtoBuf{
+    [TestClass]
+    public class TestProtoBuf :JubanTestBase{
 
-private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
+private static ILogger<TestProtoBuf> Logger =  JubanLogger.GetLogger<TestProtoBuf>();
         public void testPB()
         {
             var sub =new DummySubClass();
@@ -31,19 +34,19 @@ private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
             message.values=values;
 
             var mesg=Utils.Serialize(message);
-            Logger.ConditionalTrace(mesg.Length);
+            Logger.LogTrace(mesg.Length.ToString());
             var mesgObj = (Message)Utils.Deserialize(mesg,typeof(Message));
 
-            Logger.ConditionalTrace(mesgObj.type);
+            Logger.LogTrace(mesgObj.type);
             object[] valuesArray=new object[2];
             valuesArray[0]=Utils.Deserialize(mesgObj.values[0],Type.GetType(mesgObj.types[0]));
-            Logger.ConditionalTrace(((DummySubClass)valuesArray[0]).Prop1);
+            Logger.LogTrace(((DummySubClass)valuesArray[0]).Prop1.ToString());
 
             valuesArray[1]=Utils.Deserialize(mesgObj.values[1],Type.GetType(mesgObj.types[1]));
-            Logger.ConditionalTrace(valuesArray[1].ToString());
+            Logger.LogTrace(valuesArray[1].ToString());
 
              var dummyClass= Type.GetType(mesgObj.type);
-            Logger.ConditionalTrace(dummyClass);
+            Logger.LogTrace(dummyClass.ToString());
 
             var typesArray=new Type[2];
             typesArray[0]=Type.GetType(mesgObj.types[0]);
@@ -55,11 +58,11 @@ private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger ();
 
            var obj =Activator.CreateInstance(dummyClass);
             var invokerSub=FastInvoke.GetMethodInvoker(methodInfo);
-          Logger.ConditionalTrace("1");
+          Logger.LogTrace("1");
           var ooo = invokerSub(obj,valuesArray);
-          Logger.ConditionalTrace(ooo==null);
-             Logger.ConditionalTrace(ooo);
-             Logger.ConditionalTrace("2");
+          Logger.LogTrace((ooo==null).ToString());
+             Logger.LogTrace(ooo.ToString());
+             Logger.LogTrace("2");
         }
 
     }

@@ -5,10 +5,9 @@ using CommandLine;
 using Jubanlabs.JubanDistributed.WorkQueue;
 using Jubanlabs.JubanShared.Common;
 using Jubanlabs.JubanShared.Common.Config;
+using Jubanlabs.JubanShared.Logging;
 using Microsoft.Extensions.Configuration;
-using NLog;
-using NLog.Config;
-using NLog.Targets;
+using Microsoft.Extensions.Logging;
 
 namespace Jubanlabs.JubanDistributed
 {
@@ -60,43 +59,43 @@ namespace Jubanlabs.JubanDistributed
         void Main(IEnumerable<string> args);
     }
     public class CommandLineInterface : ICommandLineInterface{
-        private static Logger Logger = LogManager.GetCurrentClassLogger ();
+        private static ILogger<CommandLineInterface> Logger =  JubanLogger.GetLogger<CommandLineInterface>();
 
         public void Main (IEnumerable<string> args) {
 
             
-            Logger.Info("JubanDistributed.CLI location: "+Assembly.GetExecutingAssembly().Location);
-            Logger.Info("JubanDistributed.CLI version: " + Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
-            Logger.Info("JubanDistributed.CLI assembly version: " + Assembly.GetExecutingAssembly().GetName().Version);
+            Logger.LogInformation("JubanDistributed.CLI location: "+Assembly.GetExecutingAssembly().Location);
+            Logger.LogInformation("JubanDistributed.CLI version: " + Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+            Logger.LogInformation("JubanDistributed.CLI assembly version: " + Assembly.GetExecutingAssembly().GetName().Version);
             
             //load all assemblies
             Parser.Default.ParseArguments<LoadServiceOptions, LoadTaskOptions> (args)
                 .WithParsed<BaseOptions> (o => {
                     if (o.Verbose) {
-                        Logger.ConditionalTrace ($"Verbose output enabled. Current Arguments: -v {o.Verbose}");
-                        Logger.ConditionalTrace ("Quick Start Example! App is in Verbose mode!");
+                        Logger.LogTrace ($"Verbose output enabled. Current Arguments: -v {o.Verbose}");
+                        Logger.LogTrace ("Quick Start Example! App is in Verbose mode!");
                     } else {
-                        Logger.ConditionalTrace ($"Current Arguments: -v {o.Verbose}");
-                        Logger.ConditionalTrace ("Quick Start Example!");
+                        Logger.LogTrace ($"Current Arguments: -v {o.Verbose}");
+                        Logger.LogTrace ("Quick Start Example!");
                     }
                     if (!AppSession.Instance.IsEnvironmentNameSet() || !o.Environment.Equals("testing",StringComparison.OrdinalIgnoreCase)){
                         AppSession.Instance.SetEnvironmentName( o.Environment);
                     }
 
-                    Logger.Info("environment:" +AppSession.Instance.GetEnvironmentName());
+                    Logger.LogInformation("environment:" +AppSession.Instance.GetEnvironmentName());
                     IConfigurationRoot configlist =AppSettings.Instance.Config;
-                    Logger.Info(configlist.GetDebugView());
+                    Logger.LogInformation(configlist.GetDebugView());
                     
                     if (o is LoadServiceOptions) {
                         var options = (LoadServiceOptions)o;
                         if (options.service.Equals ("worker")) {
-                            Logger.ConditionalTrace ("loading workers");
+                            Logger.LogTrace ("loading workers");
                             new GeneralWorkerServiceLoader ().LoadWorker ();
                         }
 
                         if (options.service.Equals("delayedworkrunner"))
                         {
-                            Logger.ConditionalTrace("delayedworkrunner");
+                            Logger.LogTrace("delayedworkrunner");
                             new DelayedWorkRunnerScheduler().Schedule();
                         }
                     }
@@ -119,19 +118,6 @@ namespace Jubanlabs.JubanDistributed
                 });
         }
 
-        public void SetLogTarget () {
-            var config = new LoggingConfiguration ();
-
-            // Targets where to log to: File and Console
-
-            var logconsole = new ConsoleTarget("logconsole");
-
-            // Rules for mapping loggers to targets            
-            config.AddRuleForAllLevels (logconsole);
-
-            // Apply config           
-            LogManager.Configuration = config;
-        }
     }
 
 }

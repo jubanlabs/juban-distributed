@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using NLog;
+using Jubanlabs.JubanShared.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Jubanlabs.JubanDistributed.RPC
 {
     public static class RPCContext
     {
-        private static Logger Logger = LogManager.GetCurrentClassLogger ();
+        private static ILogger Logger =  JubanLogger.GetLogger(typeof(RPCContext).FullName);
         public static Dictionary<string, Type> TypesDict;
         static RPCContext()
         {
@@ -22,7 +24,7 @@ namespace Jubanlabs.JubanDistributed.RPC
                     }
                     catch (ReflectionTypeLoadException e)
                     {
-                        Logger.ConditionalTrace(s.GetName() + " can not be loaded" +e.Message+"\n"+e.StackTrace);
+                        Logger.LogTrace(s.GetName() + " can not be loaded" +e.Message+"\n"+e.StackTrace);
                         return new Type[0];
                     }
                 })
