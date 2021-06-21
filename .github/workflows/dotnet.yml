@@ -12,6 +12,7 @@ env:
   PROJECT_PATH: src/JubanDistributed/
   PROJECT_FILE: JubanDistributed.csproj
   SOLUTION_FILE: JubanDistributed.sln
+  DOTNET_ENVIRONMENT: ci
 
 jobs:
   build:

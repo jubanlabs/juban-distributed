@@ -26,8 +26,5 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <Content Include="appsettings.json" CopyToOutputDirectory="Always" />
-    
-    <Content Include="appsettings.testing.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
 </Project>

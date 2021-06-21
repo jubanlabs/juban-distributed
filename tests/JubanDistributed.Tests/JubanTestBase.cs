@@ -12,7 +12,6 @@ namespace Jubanlabs.JubanDistributed.Tests
     {
         public JubanTestBase()
         {
-            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "testing");
             var host = Host.CreateDefaultBuilder()
                 .ConfigureLogging((hostContext, loggingBuilder) => { loggingBuilder.AddConsole().AddDebug().SetMinimumLevel(LogLevel.Trace); })
                 .Build().JubanWireUp();
