@@ -1,4 +1,5 @@
 using System;
+using Jubanlabs.JubanShared.Common.Config;
 using Jubanlabs.JubanShared.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
